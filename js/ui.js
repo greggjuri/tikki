@@ -148,6 +148,28 @@ function renderPlayerHand() {
     });
 }
 
+function updatePlayerCardStates() {
+    // Update disabled states on existing cards without re-rendering
+    const cardElements = elements.playerCards.querySelectorAll('.card');
+    const cards = game.playerHand;
+    
+    cardElements.forEach((cardElement, index) => {
+        if (index < cards.length) {
+            const card = cards[index];
+            
+            // Remove old disabled state
+            cardElement.classList.remove('disabled');
+            
+            // Check if card should be disabled
+            if (!game.gameActive || game.currentPlayer !== 'player') {
+                cardElement.classList.add('disabled');
+            } else if (!game.canPlayCard(card, 'player')) {
+                cardElement.classList.add('disabled');
+            }
+        }
+    });
+}
+
 function renderAIHand() {
     elements.aiCards.innerHTML = '';
     
@@ -159,7 +181,7 @@ function renderAIHand() {
 
 function createCardElement(card, player, index) {
     const cardDiv = document.createElement('div');
-    cardDiv.className = 'card dealing';
+    cardDiv.className = 'card';
     if (player === 'ai') {
         cardDiv.classList.add('ai-card');
     }
@@ -189,7 +211,7 @@ function createCardElement(card, player, index) {
 
 function createCardBackElement() {
     const cardDiv = document.createElement('div');
-    cardDiv.className = 'card ai-card dealing';
+    cardDiv.className = 'card ai-card';
     
     const img = document.createElement('img');
     img.src = `assets/cards/backs/${game.selectedCardBack}`;
@@ -246,7 +268,20 @@ function handlePlayerCardClick(card, cardElement) {
     setTimeout(() => {
         const result = game.playCard(card, 'player');
         if (result) {
-            renderGame();
+            // Remove the played card from hand (no jump)
+            cardElement.remove();
+            
+            // Update play area to show the played card
+            renderPlayArea();
+            
+            // Update AI hand count (remove one card)
+            renderAIHand();
+            
+            // Update card states for remaining cards
+            updatePlayerCardStates();
+            
+            // Update trick count
+            updateTrickCount();
             
             // Check if trick is complete (both lead and follow cards played)
             if (game.leadCard && game.followCard) {
@@ -274,7 +309,12 @@ function handleAITurn() {
     
     // Play the card
     game.playCard(chosenCard, 'ai');
-    renderGame();
+    
+    // Update displays without full re-render
+    renderPlayArea();
+    renderAIHand();
+    updatePlayerCardStates();
+    updateTrickCount();
     
     // Check game state
     if (!game.gameActive) {
@@ -310,7 +350,10 @@ function handleTrickComplete() {
         renderPlayArea();
         renderPlayerHand(); // Re-render player cards to make them clickable again
         
-        if (game.currentPlayer === 'ai') {
+        // Check if game is over
+        if (!game.gameActive) {
+            handleGameOver();
+        } else if (game.currentPlayer === 'ai') {
             updateMessage("AI is leading...");
             setTimeout(handleAITurn, 1000);
         } else {
