@@ -257,6 +257,21 @@ class GameState {
         }
     }
 
+    // Check if hand qualifies for redeal (highest card is 9 or lower)
+    handQualifiesForRedeal(hand) {
+        const highestValue = Math.max(...hand.map(card => card.getValue()));
+        return highestValue <= 9;
+    }
+
+    // Redeal a hand (draw 5 new cards from remaining deck)
+    redealHand(player) {
+        if (player === 'player') {
+            this.playerHand = this.deck.deal(5);
+        } else {
+            this.aiHand = this.deck.deal(5);
+        }
+    }
+
     resetScores() {
         this.playerScore = 0;
         this.aiScore = 0;

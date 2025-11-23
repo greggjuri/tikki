@@ -128,28 +128,110 @@ function closeSettings() {
     elements.settingsModal.classList.add('hidden');
 }
 
-// Notification function
-function showNotification(title, message, onOk) {
+// Notification function (updated to support Yes/No buttons)
+function showNotification(title, message, onNo, onYes) {
     elements.notificationTitle.textContent = title;
     elements.notificationMessage.textContent = message;
     elements.notificationModal.classList.remove('hidden');
     
-    // Remove old event listeners and add new one
-    const newOkBtn = elements.notificationOk.cloneNode(true);
-    elements.notificationOk.parentNode.replaceChild(newOkBtn, elements.notificationOk);
-    elements.notificationOk = newOkBtn;
+    if (onYes) {
+        // Two-button mode (Yes/No)
+        const yesBtn = document.createElement('button');
+        yesBtn.textContent = 'Yes, Redeal';
+        yesBtn.className = 'btn btn-primary';
+        yesBtn.style.marginRight = '10px';
+        
+        const noBtn = document.createElement('button');
+        noBtn.textContent = 'No, Keep Hand';
+        noBtn.className = 'btn';
+        
+        const buttonContainer = document.createElement('div');
+        buttonContainer.style.marginTop = '20px';
+        buttonContainer.appendChild(yesBtn);
+        buttonContainer.appendChild(noBtn);
+        
+        // Replace OK button with Yes/No buttons
+        const oldOkBtn = elements.notificationOk;
+        oldOkBtn.style.display = 'none';
+        elements.notificationModal.querySelector('.modal-content').appendChild(buttonContainer);
+        
+        yesBtn.addEventListener('click', () => {
+            elements.notificationModal.classList.add('hidden');
+            buttonContainer.remove();
+            oldOkBtn.style.display = '';
+            if (onYes) onYes();
+        });
+        
+        noBtn.addEventListener('click', () => {
+            elements.notificationModal.classList.add('hidden');
+            buttonContainer.remove();
+            oldOkBtn.style.display = '';
+            if (onNo) onNo();
+        });
+    } else {
+        // Single-button mode (OK only)
+        const newOkBtn = elements.notificationOk.cloneNode(true);
+        elements.notificationOk.parentNode.replaceChild(newOkBtn, elements.notificationOk);
+        elements.notificationOk = newOkBtn;
+        
+        elements.notificationOk.addEventListener('click', () => {
+            elements.notificationModal.classList.add('hidden');
+            if (onNo) onNo();
+        });
+    }
+}
+
+// Handle redeal offers after initial deal
+async function handleRedealOffers() {
+    // Check if player qualifies for redeal
+    const playerQualifies = game.handQualifiesForRedeal(game.playerHand);
     
-    elements.notificationOk.addEventListener('click', () => {
-        elements.notificationModal.classList.add('hidden');
-        if (onOk) onOk();
-    });
+    // Check if AI qualifies for redeal
+    const aiQualifies = game.handQualifiesForRedeal(game.aiHand);
+    
+    // Offer redeal to player first if they qualify
+    if (playerQualifies) {
+        const playerWantsRedeal = await new Promise((resolve) => {
+            showNotification(
+                '🎴 Weak Hand Detected',
+                'Your highest card is 9 or lower. Would you like to redeal your hand?\n\n(You\'ll draw 5 new cards from the remaining deck)',
+                () => resolve(false),
+                () => resolve(true)
+            );
+        });
+        
+        if (playerWantsRedeal) {
+            game.redealHand('player');
+            renderPlayerHand();
+            showNotification('Cards Redealt', 'You received 5 new cards!', null);
+            await new Promise(resolve => setTimeout(resolve, 1500));
+        }
+    }
+    
+    // AI decides on redeal if it qualifies
+    if (aiQualifies) {
+        // AI always redeals if highest card is 9 or lower
+        updateMessage("AI is considering a redeal...");
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        game.redealHand('ai');
+        renderAIHand();
+        showNotification('AI Redealt', 'The AI chose to redeal their hand.', null);
+        await new Promise(resolve => setTimeout(resolve, 1500));
+    }
 }
 
 // Game functions
 function startNewGame() {
     game.startNewMatch();
     renderGame();
-    updateMessage("Your turn! Play a card.");
+    updateMessage("Dealing cards...");
+    
+    // Check for redeal offers after initial deal
+    setTimeout(async () => {
+        await handleRedealOffers();
+        updateMessage("Your turn! Play a card.");
+    }, 500);
 }
 
 function restartRound() {
