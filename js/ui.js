@@ -23,7 +23,6 @@ const elements = {
     leadCardSlot: document.getElementById('lead-card'),
     followCardSlot: document.getElementById('follow-card'),
     gameMessage: document.getElementById('game-message'),
-    trickCount: document.getElementById('current-trick'),
     playerScore: document.getElementById('player-score'),
     aiScore: document.getElementById('ai-score'),
     newGameBtn: document.getElementById('new-game-btn'),
@@ -32,7 +31,12 @@ const elements = {
     settingsModal: document.getElementById('settings-modal'),
     closeSettings: document.getElementById('close-settings'),
     cardBackGallery: document.getElementById('card-back-gallery'),
-    aiDifficultySelect: document.getElementById('ai-difficulty')
+    aiDifficultySelect: document.getElementById('ai-difficulty'),
+    scoreGoalInput: document.getElementById('score-goal'),
+    notificationModal: document.getElementById('notification-modal'),
+    notificationTitle: document.getElementById('notification-title'),
+    notificationMessage: document.getElementById('notification-message'),
+    notificationOk: document.getElementById('notification-ok')
 };
 
 // Initialize UI
@@ -86,6 +90,18 @@ function initializeSettings() {
         game.aiDifficulty = e.target.value;
         game.saveSettings();
     });
+
+    // Set score goal input
+    elements.scoreGoalInput.value = game.scoreGoal;
+    elements.scoreGoalInput.addEventListener('change', (e) => {
+        const value = parseInt(e.target.value);
+        if (value >= 1 && value <= 20) {
+            game.scoreGoal = value;
+            game.saveSettings();
+        } else {
+            e.target.value = game.scoreGoal;
+        }
+    });
 }
 
 function selectCardBack(back) {
@@ -112,9 +128,26 @@ function closeSettings() {
     elements.settingsModal.classList.add('hidden');
 }
 
+// Notification function
+function showNotification(title, message, onOk) {
+    elements.notificationTitle.textContent = title;
+    elements.notificationMessage.textContent = message;
+    elements.notificationModal.classList.remove('hidden');
+    
+    // Remove old event listeners and add new one
+    const newOkBtn = elements.notificationOk.cloneNode(true);
+    elements.notificationOk.parentNode.replaceChild(newOkBtn, elements.notificationOk);
+    elements.notificationOk = newOkBtn;
+    
+    elements.notificationOk.addEventListener('click', () => {
+        elements.notificationModal.classList.add('hidden');
+        if (onOk) onOk();
+    });
+}
+
 // Game functions
 function startNewGame() {
-    game.startNewGame();
+    game.startNewMatch();
     renderGame();
     updateMessage("Your turn! Play a card.");
 }
@@ -125,7 +158,9 @@ function restartRound() {
     } else {
         const confirmed = confirm("Are you sure you want to restart this round?");
         if (confirmed) {
-            startNewGame();
+            game.startNewRound();
+            renderGame();
+            updateMessage("Your turn! Play a card.");
         }
     }
 }
@@ -136,7 +171,6 @@ function renderGame() {
     renderAIHand();
     renderPlayArea();
     updateScores();
-    updateTrickCount();
 }
 
 function renderPlayerHand() {
@@ -280,9 +314,6 @@ function handlePlayerCardClick(card, cardElement) {
             // Update card states for remaining cards
             updatePlayerCardStates();
             
-            // Update trick count
-            updateTrickCount();
-            
             // Check if trick is complete (both lead and follow cards played)
             if (game.leadCard && game.followCard) {
                 // Trick complete
@@ -314,7 +345,6 @@ function handleAITurn() {
     renderPlayArea();
     renderAIHand();
     updatePlayerCardStates();
-    updateTrickCount();
     
     // Check game state
     if (!game.gameActive) {
@@ -364,18 +394,45 @@ function handleTrickComplete() {
 
 function handleGameOver() {
     const lastTrick = game.trickHistory[game.trickHistory.length - 1];
-    const winner = lastTrick.winner;
-    const winnerText = winner === 'player' ? 'You' : 'AI';
+    const roundWinner = lastTrick.winner;
+    const roundWinnerText = roundWinner === 'player' ? 'You' : 'AI';
     
-    updateMessage(`${winnerText} won the final trick! ${winnerText === 'You' ? 'You get' : 'AI gets'} 1 point!`);
+    updateMessage(`${roundWinnerText} won the final trick!`);
     updateScores();
     
     setTimeout(() => {
-        const playAgain = confirm(`${winnerText} won this round!\n\nScore: You ${game.playerScore} - ${game.aiScore} AI\n\nPlay another round?`);
-        if (playAgain) {
-            startNewGame();
+        // Check if someone won the match
+        if (game.playerScore >= game.scoreGoal) {
+            showNotification(
+                '🎉 You Won the Match!',
+                `Congratulations! You reached ${game.scoreGoal} points!\n\nFinal Score: You ${game.playerScore} - ${game.aiScore} AI`,
+                () => {
+                    game.startNewMatch();
+                    renderGame();
+                    updateMessage("New match started! Your turn.");
+                }
+            );
+        } else if (game.aiScore >= game.scoreGoal) {
+            showNotification(
+                'AI Won the Match',
+                `AI reached ${game.scoreGoal} points.\n\nFinal Score: You ${game.playerScore} - ${game.aiScore} AI`,
+                () => {
+                    game.startNewMatch();
+                    renderGame();
+                    updateMessage("New match started! Your turn.");
+                }
+            );
         } else {
-            updateMessage("Game ended. Click 'New Game' to play again.");
+            // Round over but match continues
+            showNotification(
+                'Round Complete',
+                `${roundWinnerText} won this round!\n\nScore: You ${game.playerScore} - ${game.aiScore} AI\n\nFirst to ${game.scoreGoal} wins!`,
+                () => {
+                    game.startNewRound();
+                    renderGame();
+                    updateMessage("New round! Your turn.");
+                }
+            );
         }
     }, 2000);
 }
@@ -383,10 +440,6 @@ function handleGameOver() {
 // Update functions
 function updateMessage(message) {
     elements.gameMessage.textContent = message;
-}
-
-function updateTrickCount() {
-    elements.trickCount.textContent = `Trick: ${game.currentTrick} / 5`;
 }
 
 function updateScores() {

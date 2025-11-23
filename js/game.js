@@ -65,6 +65,7 @@ class GameState {
         this.aiHand = [];
         this.playerScore = 0;
         this.aiScore = 0;
+        this.scoreGoal = 5; // Points needed to win the match
         this.currentTrick = 0;
         this.leadCard = null;
         this.followCard = null;
@@ -73,6 +74,7 @@ class GameState {
         this.playedCards = []; // cards played in current trick
         this.trickHistory = []; // history of all tricks
         this.gameActive = false;
+        this.roundActive = false; // Track if a round is being played
         this.aiDifficulty = 'medium';
         this.selectedCardBack = 'blue.svg';
         
@@ -83,6 +85,7 @@ class GameState {
     loadSettings() {
         const savedDifficulty = localStorage.getItem('aiDifficulty');
         const savedCardBack = localStorage.getItem('cardBack');
+        const savedGoal = localStorage.getItem('scoreGoal');
         
         if (savedDifficulty) {
             this.aiDifficulty = savedDifficulty;
@@ -90,14 +93,26 @@ class GameState {
         if (savedCardBack) {
             this.selectedCardBack = savedCardBack;
         }
+        if (savedGoal) {
+            this.scoreGoal = parseInt(savedGoal);
+        }
     }
 
     saveSettings() {
         localStorage.setItem('aiDifficulty', this.aiDifficulty);
         localStorage.setItem('cardBack', this.selectedCardBack);
+        localStorage.setItem('scoreGoal', this.scoreGoal.toString());
     }
 
-    startNewGame() {
+    startNewMatch() {
+        // Reset scores for a brand new match
+        this.playerScore = 0;
+        this.aiScore = 0;
+        this.startNewRound();
+    }
+
+    startNewRound() {
+        // Start a new round (keep scores)
         this.deck.initialize();
         this.deck.shuffle();
         
@@ -115,6 +130,12 @@ class GameState {
         this.leadPlayer = 'player';
         this.currentPlayer = 'player';
         this.gameActive = true;
+        this.roundActive = true;
+    }
+
+    // Keep old name for compatibility during transition
+    startNewGame() {
+        this.startNewRound();
     }
 
     canPlayCard(card, player) {

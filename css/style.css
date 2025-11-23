@@ -80,6 +80,27 @@ body {
     color: #333;
 }
 
+.notification-modal {
+    max-width: 400px;
+    text-align: center;
+}
+
+.notification-modal h2 {
+    font-size: 1.5em;
+}
+
+.notification-modal p {
+    font-size: 1.1em;
+    margin: 20px 0;
+    color: #555;
+    line-height: 1.6;
+}
+
+.notification-modal .btn {
+    margin-top: 10px;
+    min-width: 120px;
+}
+
 .setting-group {
     margin-bottom: 25px;
 }
@@ -92,6 +113,14 @@ body {
 }
 
 .setting-group select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.setting-group input[type="number"] {
     width: 100%;
     padding: 10px;
     border: 2px solid #ddd;
