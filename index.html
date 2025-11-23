@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Five Card Trick Game</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Settings Panel -->
+        <div class="settings-panel">
+            <button id="settings-btn" class="settings-btn">⚙️ Settings</button>
+            <div id="settings-modal" class="modal hidden">
+                <div class="modal-content">
+                    <h2>Game Settings</h2>
+                    <div class="setting-group">
+                        <label for="card-back-select">Choose Card Back:</label>
+                        <div id="card-back-gallery" class="card-back-gallery">
+                            <!-- Card back options will be populated by JS -->
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label for="ai-difficulty">AI Difficulty:</label>
+                        <select id="ai-difficulty">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    <button id="close-settings" class="btn">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Header -->
+        <div class="game-header">
+            <h1>Five Card Trick</h1>
+            <div class="score-display">
+                <div class="score">
+                    <span class="label">You:</span>
+                    <span id="player-score">0</span>
+                </div>
+                <div class="score">
+                    <span class="label">AI:</span>
+                    <span id="ai-score">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Info -->
+        <div class="game-info">
+            <p id="game-message">Click "New Game" to start</p>
+            <p id="trick-count">Trick: <span id="current-trick">0</span> / 5</p>
+        </div>
+
+        <!-- AI Hand (face down) -->
+        <div class="ai-hand hand">
+            <h3>AI Hand</h3>
+            <div id="ai-cards" class="card-container">
+                <!-- AI cards will be added here by JS -->
+            </div>
+        </div>
+
+        <!-- Play Area (center table) -->
+        <div class="play-area">
+            <h3>Current Trick</h3>
+            <div id="play-area-cards" class="played-cards">
+                <div id="lead-card" class="played-card-slot">
+                    <!-- Lead card -->
+                </div>
+                <div id="follow-card" class="played-card-slot">
+                    <!-- Follow card -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Player Hand (face up) -->
+        <div class="player-hand hand">
+            <h3>Your Hand</h3>
+            <div id="player-cards" class="card-container">
+                <!-- Player cards will be added here by JS -->
+            </div>
+        </div>
+
+        <!-- Game Controls -->
+        <div class="game-controls">
+            <button id="new-game-btn" class="btn btn-primary">New Game</button>
+            <button id="restart-btn" class="btn">Restart Round</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/game.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+</html>

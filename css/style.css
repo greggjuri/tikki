@@ -1,0 +1,375 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Game Container */
+.game-container {
+    max-width: 1200px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Settings Panel */
+.settings-panel {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.settings-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    color: white;
+    transition: background 0.3s;
+}
+
+.settings-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.setting-group {
+    margin-bottom: 25px;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #555;
+}
+
+.setting-group select {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+/* Card Back Gallery */
+.card-back-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.card-back-option {
+    cursor: pointer;
+    border: 3px solid transparent;
+    border-radius: 8px;
+    padding: 5px;
+    transition: all 0.3s;
+}
+
+.card-back-option:hover {
+    border-color: #4CAF50;
+    transform: scale(1.05);
+}
+
+.card-back-option.selected {
+    border-color: #2196F3;
+    box-shadow: 0 0 10px rgba(33, 150, 243, 0.5);
+}
+
+.card-back-option img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 4px;
+}
+
+/* Header */
+.game-header {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.game-header h1 {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.score-display {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    font-size: 1.3em;
+}
+
+.score {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 25px;
+    border-radius: 10px;
+}
+
+.score .label {
+    margin-right: 10px;
+    font-weight: 600;
+}
+
+/* Game Info */
+.game-info {
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.game-info p {
+    margin: 5px 0;
+    font-size: 1.1em;
+}
+
+#game-message {
+    font-weight: 600;
+    font-size: 1.2em;
+}
+
+/* Hands */
+.hand {
+    margin: 20px 0;
+}
+
+.hand h3 {
+    color: white;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.card-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    min-height: 150px;
+    align-items: center;
+}
+
+/* Cards */
+.card {
+    width: 100px;
+    height: 140px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 8px;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.card.disabled:hover {
+    transform: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.card.ai-card {
+    cursor: default;
+}
+
+.card.ai-card:hover {
+    transform: none;
+}
+
+/* Play Area */
+.play-area {
+    background: rgba(34, 139, 34, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    margin: 30px 0;
+    min-height: 200px;
+}
+
+.play-area h3 {
+    color: white;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.played-cards {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    align-items: center;
+}
+
+.played-card-slot {
+    width: 120px;
+    height: 168px;
+    border: 3px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.played-card-slot::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -25px;
+    color: white;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.played-card-slot .card {
+    border: none;
+}
+
+/* Buttons */
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: #4CAF50;
+}
+
+.btn-primary:hover {
+    background: #45a049;
+}
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+/* Animations */
+@keyframes cardDeal {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card.dealing {
+    animation: cardDeal 0.5s ease-out;
+}
+
+@keyframes cardPlay {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.1);
+    }
+}
+
+.card.playing {
+    animation: cardPlay 0.3s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .game-container {
+        padding: 15px;
+    }
+
+    .game-header h1 {
+        font-size: 1.8em;
+    }
+
+    .card {
+        width: 70px;
+        height: 98px;
+    }
+
+    .played-card-slot {
+        width: 84px;
+        height: 117px;
+    }
+
+    .score-display {
+        gap: 20px;
+        font-size: 1em;
+    }
+}
