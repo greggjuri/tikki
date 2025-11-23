@@ -1,6 +1,6 @@
 # Five Card Trick Game
 
-A simple two-player card game where only the last trick matters. Play against an AI opponent with three difficulty levels.
+A simple two-player card game where only the last trick matters. Play against an AI opponent with three difficulty levels in a match-based scoring system.
 
 ## Game Rules
 
@@ -11,17 +11,24 @@ A simple two-player card game where only the last trick matters. Play against an
 5. Whoever plays the highest card of the led suit wins the trick and leads the next card
 6. This continues for 5 tricks
 7. **Only the winner of the 5th (final) trick scores 1 point**
-8. No trump cards
+8. Rounds continue until a player reaches the score goal (default: 5 points)
+9. No trump cards
 
 ## Features
 
+- **Match-Based Scoring:**
+  - Set your own score goal (1-20 points, default 5)
+  - Play rounds until someone reaches the goal
+  - Scores persist across rounds in a match
+  
 - **Three AI Difficulty Levels:**
   - **Easy**: Random valid plays
   - **Medium**: Strategic card management, tries to save high cards for trick 5
   - **Hard**: Advanced probability-based decision making
   
 - **Customizable Card Backs**: Choose from 10 different card back designs
-- **Score Tracking**: Keep track of points across multiple rounds
+- **Custom Notifications**: Clean, branded notifications instead of browser dialogs
+- **Smooth Animations**: Cards stay in place, no jumping when playing
 - **Responsive Design**: Works on desktop and mobile devices
 
 ## Project Structure
@@ -29,10 +36,12 @@ A simple two-player card game where only the last trick matters. Play against an
 ```
 card-game/
 ├── index.html          # Main HTML file
+├── README.md           # This file
+├── .gitignore          # Git ignore rules
 ├── css/
 │   └── style.css       # Styling
 ├── js/
-│   ├── game.js         # Core game logic (deck, cards, rules)
+│   ├── game.js         # Core game logic (deck, cards, rules, match system)
 │   ├── ai.js           # AI decision making
 │   └── ui.js           # User interface and interactions
 └── assets/
@@ -66,15 +75,28 @@ The game expects card files to follow this naming pattern:
 - CSS3 (with flexbox and grid)
 - Vanilla JavaScript (ES6+)
 - SVG graphics
+- LocalStorage for persistent settings
 
 ## How to Play
 
-1. Click "New Game" to start a round
-2. Click on a card in your hand to play it
-3. The AI will automatically play after you
-4. Watch the tricks play out
-5. Win the 5th trick to score a point!
-6. Play multiple rounds to see who wins
+1. Click "New Game" to start a match
+2. Optionally, open Settings to:
+   - Set your score goal (how many points to win)
+   - Choose your preferred card back design
+   - Select AI difficulty
+3. Click on a card in your hand to play it
+4. The AI will automatically play after you
+5. Watch the tricks play out
+6. Win the 5th trick to score a point!
+7. Play rounds until someone reaches the score goal
+8. Winner gets a victory notification with option to start a new match
+
+## Game Flow
+
+- **Match**: A series of rounds played until someone reaches the score goal
+- **Round**: 5 tricks played with 5 cards each
+- **Trick**: One card from each player
+- **Score Goal**: Customizable (1-20 points, default 5)
 
 ## AI Strategy
 
@@ -95,13 +117,28 @@ The game expects card files to follow this naming pattern:
 - Makes optimal decisions for trick 5
 - Strategic suit selection when leading
 
+## Settings
+
+All settings are saved to browser localStorage:
+- **Score Goal**: How many points needed to win a match
+- **AI Difficulty**: Easy, Medium, or Hard
+- **Card Back**: Your preferred card back design
+
+## Development
+
+This game was developed iteratively with a focus on:
+- Clean, maintainable code structure
+- Smooth user experience (no card jumping, clean notifications)
+- Strategic AI opponents that provide challenge
+- Flexible match system for extended play
+
 ## Future Enhancements
 
 Potential features to add:
 - Multiplayer (human vs human)
 - Game statistics and history
-- Sound effects
-- Animations improvements
+- More sound effects
+- Additional animation improvements
 - Tutorial/help system
 - Trump card variant
 
@@ -109,7 +146,14 @@ Potential features to add:
 
 - Card graphics: [Tek Eye Public Domain SVG Playing Cards](https://www.tekeye.uk/playing_cards/svg-playing-cards)
 - Game concept: Traditional card game mechanics
+- Development: Iterative collaboration between developer and AI assistant
 
 ## License
 
 This project is released under the MIT License. The card graphics are public domain.
+
+## Version History
+
+- **v1.0**: Initial release with basic gameplay
+- **v1.1**: Added match/round system with customizable score goals
+- **v1.2**: Improved UI with custom notifications and smooth card animations
