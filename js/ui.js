@@ -248,9 +248,17 @@ function handlePlayerCardClick(card, cardElement) {
         if (result) {
             renderGame();
             
-            if (game.currentPlayer === 'ai') {
+            // Check if trick is complete (both lead and follow cards played)
+            if (game.leadCard && game.followCard) {
+                // Trick complete
+                handleTrickComplete();
+            } else if (game.currentPlayer === 'ai') {
+                // Player led, now AI's turn to follow
                 updateMessage("AI is thinking...");
                 setTimeout(handleAITurn, 1000);
+            } else {
+                // Player is leading next
+                updateMessage("Your turn! Play a card.");
             }
         }
     }, 300);
@@ -292,10 +300,15 @@ function handleTrickComplete() {
     
     updateMessage(`${winnerText} won trick ${lastTrick.trickNumber}!`);
     
+    // Disable player input during trick display
+    const playerCards = document.querySelectorAll('#player-cards .card');
+    playerCards.forEach(card => card.classList.add('disabled'));
+    
     // Clear the table after a delay
     setTimeout(() => {
         game.clearTrick();
         renderPlayArea();
+        renderPlayerHand(); // Re-render player cards to make them clickable again
         
         if (game.currentPlayer === 'ai') {
             updateMessage("AI is leading...");

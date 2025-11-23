@@ -183,7 +183,7 @@ class GameState {
             winner = this.leadPlayer;
         }
 
-        // Store trick result
+        // Store trick result (save cards before clearing)
         this.trickHistory.push({
             trickNumber: this.currentTrick,
             leadCard: this.leadCard,
@@ -208,7 +208,8 @@ class GameState {
         this.currentPlayer = winner;
         this.currentTrick++;
         
-        // Small delay before clearing the table
+        // DON'T clear the cards here - let UI handle display timing
+        // but the trick is marked as complete
         return 'trick_complete';
     }
 
