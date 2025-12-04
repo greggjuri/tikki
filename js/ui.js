@@ -16,6 +16,43 @@ const CARD_BACKS = [
     'red2.svg'
 ];
 
+// Audio context for sound effects
+let audioContext = null;
+
+// Initialize audio context (must be done after user interaction)
+function initAudio() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+// Play a click sound when a card is played
+function playCardSound() {
+    if (!game.soundEnabled) return;
+    
+    initAudio();
+    
+    // Create oscillator for a short "click" sound
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    // Configure the click sound
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.05);
+    
+    // Quick fade out for a clean click
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.08);
+    
+    // Play the sound
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.08);
+}
+
 // DOM Elements
 const elements = {
     playerCards: document.getElementById('player-cards'),
@@ -36,7 +73,8 @@ const elements = {
     notificationModal: document.getElementById('notification-modal'),
     notificationTitle: document.getElementById('notification-title'),
     notificationMessage: document.getElementById('notification-message'),
-    notificationOk: document.getElementById('notification-ok')
+    notificationOk: document.getElementById('notification-ok'),
+    soundToggle: document.getElementById('sound-toggle'),
 };
 
 // Initialize UI
@@ -54,6 +92,17 @@ function initUI() {
 
     // Initialize settings
     initializeSettings();
+        // Set sound toggle
+    if (elements.soundToggle) {
+        elements.soundToggle.checked = game.soundEnabled;
+        elements.soundToggle.addEventListener('change', (e) => {
+            game.soundEnabled = e.target.checked;
+            game.saveSettings();
+            if (game.soundEnabled) {
+                playCardSound(); // Test sound
+            }
+        });
+    }
     
     // Update display
     updateScores();
@@ -378,6 +427,8 @@ function handlePlayerCardClick(card, cardElement) {
         return;
     }
     
+    playCardSound();
+
     // Play the card
     cardElement.classList.add('playing');
     
@@ -419,6 +470,8 @@ function handleAITurn() {
     
     // AI chooses a card
     const chosenCard = ai.chooseCard();
+
+    playCardSound();
     
     // Play the card
     game.playCard(chosenCard, 'ai');

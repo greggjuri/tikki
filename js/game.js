@@ -31,6 +31,7 @@ class Deck {
     constructor() {
         this.cards = [];
         this.initialize();
+        this.soundEnabled = true; // Default on
     }
 
     initialize() {
@@ -96,12 +97,20 @@ class GameState {
         if (savedGoal) {
             this.scoreGoal = parseInt(savedGoal);
         }
+
+        const savedSound = localStorage.getItem('soundEnabled');
+        
+        if (savedSound !== null) {
+            this.soundEnabled = savedSound === 'true';
+        }
     }
+        
 
     saveSettings() {
         localStorage.setItem('aiDifficulty', this.aiDifficulty);
         localStorage.setItem('cardBack', this.selectedCardBack);
         localStorage.setItem('scoreGoal', this.scoreGoal.toString());
+        localStorage.setItem('soundEnabled', this.soundEnabled.toString());
     }
 
     startNewMatch() {
