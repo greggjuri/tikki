@@ -57,6 +57,7 @@ const elements = {
     notificationMessage: document.getElementById('notification-message'),
     notificationOk: document.getElementById('notification-ok'),
     soundToggle: document.getElementById('sound-toggle'),
+    difficultyHint: document.getElementById('difficulty-hint'),
 };
 
 // Initialize UI
@@ -117,9 +118,11 @@ function initializeSettings() {
 
     // Set difficulty select
     elements.aiDifficultySelect.value = game.aiDifficulty;
+    updateDifficultyHint(game.aiDifficulty);
     elements.aiDifficultySelect.addEventListener('change', (e) => {
         game.aiDifficulty = e.target.value;
         game.saveSettings();
+        updateDifficultyHint(e.target.value);
     });
 
     // Set score goal input
@@ -133,6 +136,21 @@ function initializeSettings() {
             e.target.value = game.scoreGoal;
         }
     });
+}
+
+// Update difficulty hint text
+function updateDifficultyHint(difficulty) {
+    if (!elements.difficultyHint) return;
+    
+    const hints = {
+        'easy': 'Plays random valid cards. Good for learning the rules.',
+        'medium': 'Basic strategy: dumps low cards early, saves high for trick 5.',
+        'hard': 'Advanced probability-based decisions and card tracking.',
+        'grandmaster': '👑 Expert AI using suit-draining, lead control, and void exploitation. Based on winning player strategies!'
+    };
+    
+    elements.difficultyHint.textContent = hints[difficulty] || '';
+    elements.difficultyHint.className = 'difficulty-hint' + (difficulty === 'grandmaster' ? ' grandmaster' : '');
 }
 
 function selectCardBack(back) {
