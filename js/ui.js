@@ -58,6 +58,9 @@ const elements = {
     notificationOk: document.getElementById('notification-ok'),
     soundToggle: document.getElementById('sound-toggle'),
     difficultyHint: document.getElementById('difficulty-hint'),
+    matchInfo: document.getElementById('match-info'),
+    goalDisplay: document.getElementById('goal-display'),
+    difficultyDisplay: document.getElementById('difficulty-display'),
 };
 
 // Initialize UI
@@ -274,13 +277,38 @@ async function handleRedealOffers() {
 function startNewGame() {
     game.startNewMatch();
     renderGame();
+    updateMatchInfo();
     updateMessage("Dealing cards...");
     
     // Check for redeal offers after initial deal
     setTimeout(async () => {
         await handleRedealOffers();
-        updateMessage("Your turn! Play a card.");
+        
+        // Check who goes first
+        if (game.currentPlayer === 'ai') {
+            updateMessage("AI goes first this round!");
+            setTimeout(handleAITurn, 1000);
+        } else {
+            updateMessage("You go first! Play a card.");
+        }
     }, 500);
+}
+
+// Update match info display
+function updateMatchInfo() {
+    if (elements.goalDisplay) {
+        elements.goalDisplay.textContent = game.scoreGoal;
+    }
+    if (elements.difficultyDisplay) {
+        elements.difficultyDisplay.textContent = game.getDifficultyDisplayName();
+        
+        // Add special class for grandmaster
+        if (game.aiDifficulty === 'grandmaster') {
+            elements.difficultyDisplay.classList.add('grandmaster-text');
+        } else {
+            elements.difficultyDisplay.classList.remove('grandmaster-text');
+        }
+    }
 }
 
 function restartRound() {
@@ -289,9 +317,16 @@ function restartRound() {
     } else {
         const confirmed = confirm("Are you sure you want to restart this round?");
         if (confirmed) {
-            game.startNewRound();
+            game.startNewRound(false);
             renderGame();
-            updateMessage("Your turn! Play a card.");
+            
+            // Check who goes first
+            if (game.currentPlayer === 'ai') {
+                updateMessage("AI goes first this round!");
+                setTimeout(handleAITurn, 1000);
+            } else {
+                updateMessage("Your turn! Play a card.");
+            }
         }
     }
 }
@@ -544,7 +579,8 @@ function handleGameOver() {
                 () => {
                     game.startNewMatch();
                     renderGame();
-                    updateMessage("New match started! Your turn.");
+                    updateMatchInfo();
+                    handleNewRoundStart();
                 }
             );
         } else if (game.aiScore >= game.scoreGoal) {
@@ -554,22 +590,34 @@ function handleGameOver() {
                 () => {
                     game.startNewMatch();
                     renderGame();
-                    updateMessage("New match started! Your turn.");
+                    updateMatchInfo();
+                    handleNewRoundStart();
                 }
             );
         } else {
             // Round over but match continues
+            const nextStarter = game.roundStartingPlayer === 'player' ? 'AI' : 'You';
             showNotification(
                 'Round Complete',
-                `${roundWinnerText} won this round!\n\nScore: You ${game.playerScore} - ${game.aiScore} AI\n\nFirst to ${game.scoreGoal} wins!`,
+                `${roundWinnerText} won this round!\n\nScore: You ${game.playerScore} - ${game.aiScore} AI\n\nFirst to ${game.scoreGoal} wins!\n\n${nextStarter} will lead next round.`,
                 () => {
-                    game.startNewRound();
+                    game.startNewRound(false);
                     renderGame();
-                    updateMessage("New round! Your turn.");
+                    handleNewRoundStart();
                 }
             );
         }
     }, 2000);
+}
+
+// Handle the start of a new round (check who goes first)
+function handleNewRoundStart() {
+    if (game.currentPlayer === 'ai') {
+        updateMessage("AI goes first this round!");
+        setTimeout(handleAITurn, 1000);
+    } else {
+        updateMessage("You go first! Play a card.");
+    }
 }
 
 // Update functions

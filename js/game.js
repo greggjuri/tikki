@@ -78,6 +78,8 @@ class GameState {
         this.roundActive = false; // Track if a round is being played
         this.aiDifficulty = 'medium';
         this.selectedCardBack = 'blue.svg';
+        this.matchStartingPlayer = null; // Who started the match (random)
+        this.roundStartingPlayer = null; // Who starts current round (alternates)
         
         // Load settings from localStorage
         this.loadSettings();
@@ -117,10 +119,15 @@ class GameState {
         // Reset scores for a brand new match
         this.playerScore = 0;
         this.aiScore = 0;
-        this.startNewRound();
+        
+        // Randomly determine who goes first in this match
+        this.matchStartingPlayer = Math.random() < 0.5 ? 'player' : 'ai';
+        this.roundStartingPlayer = this.matchStartingPlayer;
+        
+        this.startNewRound(true); // true = first round of match
     }
 
-    startNewRound() {
+    startNewRound(isFirstRound = false) {
         // Start a new round (keep scores)
         this.deck.initialize();
         this.deck.shuffle();
@@ -134,17 +141,32 @@ class GameState {
         this.playedCards = [];
         this.trickHistory = [];
         
-        // Randomly determine who goes first (or player next to dealer always goes first)
-        // For simplicity, let's say player always goes first in the first trick
-        this.leadPlayer = 'player';
-        this.currentPlayer = 'player';
+        // Alternate starting player each round (except first round which was set in startNewMatch)
+        if (!isFirstRound) {
+            // Alternate from who started the previous round
+            this.roundStartingPlayer = this.roundStartingPlayer === 'player' ? 'ai' : 'player';
+        }
+        
+        this.leadPlayer = this.roundStartingPlayer;
+        this.currentPlayer = this.roundStartingPlayer;
         this.gameActive = true;
         this.roundActive = true;
     }
 
     // Keep old name for compatibility during transition
     startNewGame() {
-        this.startNewRound();
+        this.startNewRound(false);
+    }
+    
+    // Get display name for difficulty
+    getDifficultyDisplayName() {
+        const names = {
+            'easy': 'Easy',
+            'medium': 'Medium',
+            'hard': 'Hard',
+            'grandmaster': '👑 Grandmaster'
+        };
+        return names[this.aiDifficulty] || this.aiDifficulty;
     }
 
     canPlayCard(card, player) {
