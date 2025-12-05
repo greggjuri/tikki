@@ -30,27 +30,9 @@ function initAudio() {
 function playCardSound() {
     if (!game.soundEnabled) return;
     
-    initAudio();
-    
-    // Create oscillator for a short "click" sound
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    // Configure the click sound
-    oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.05);
-    
-    // Quick fade out for a clean click
-    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.08);
-    
-    // Play the sound
-    oscillator.start(audioContext.currentTime);
-    oscillator.stop(audioContext.currentTime + 0.08);
+    const sound = new Audio('assets/sounds/card-flip.wav');
+    sound.volume = 0.5;
+    sound.play();
 }
 
 // DOM Elements
