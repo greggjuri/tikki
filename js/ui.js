@@ -45,7 +45,6 @@ const elements = {
     playerScore: document.getElementById('player-score'),
     aiScore: document.getElementById('ai-score'),
     newGameBtn: document.getElementById('new-game-btn'),
-    restartBtn: document.getElementById('restart-btn'),
     settingsBtn: document.getElementById('settings-btn'),
     settingsModal: document.getElementById('settings-modal'),
     closeSettings: document.getElementById('close-settings'),
@@ -67,7 +66,6 @@ const elements = {
 function initUI() {
     // Set up event listeners
     elements.newGameBtn.addEventListener('click', startNewGame);
-    elements.restartBtn.addEventListener('click', restartRound);
     elements.settingsBtn.addEventListener('click', openSettings);
     elements.closeSettings.addEventListener('click', closeSettings);
     elements.settingsModal.addEventListener('click', (e) => {
@@ -307,26 +305,6 @@ function updateMatchInfo() {
             elements.difficultyDisplay.classList.add('grandmaster-text');
         } else {
             elements.difficultyDisplay.classList.remove('grandmaster-text');
-        }
-    }
-}
-
-function restartRound() {
-    if (!game.gameActive) {
-        startNewGame();
-    } else {
-        const confirmed = confirm("Are you sure you want to restart this round?");
-        if (confirmed) {
-            game.startNewRound(false);
-            renderGame();
-            
-            // Check who goes first
-            if (game.currentPlayer === 'ai') {
-                updateMessage("AI goes first this round!");
-                setTimeout(handleAITurn, 1000);
-            } else {
-                updateMessage("Your turn! Play a card.");
-            }
         }
     }
 }

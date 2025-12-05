@@ -28,8 +28,11 @@ body {
 
 /* Settings Panel */
 .settings-panel {
-    position: relative;
-    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
 }
 
 .settings-btn {
@@ -45,6 +48,40 @@ body {
 
 .settings-btn:hover {
     background: rgba(255, 255, 255, 0.3);
+}
+
+/* Match Info Display */
+.match-info {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    font-size: 0.9em;
+}
+
+.match-goal, .match-difficulty {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.match-divider {
+    margin: 0 10px;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+#goal-display, #difficulty-display {
+    font-weight: 700;
+    color: white;
+}
+
+.grandmaster-text {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.settings-panel .btn-primary {
+    margin-left: auto;
 }
 
 /* Modal */
@@ -210,38 +247,6 @@ body {
     font-weight: 600;
 }
 
-/* Match Info Display */
-.match-info {
-    margin-top: 10px;
-    padding: 6px 16px;
-    background: rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-    font-size: 0.9em;
-    display: inline-block;
-}
-
-.match-goal, .match-difficulty {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.match-divider {
-    margin: 0 10px;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-#goal-display, #difficulty-display {
-    font-weight: 700;
-    color: white;
-}
-
-.grandmaster-text {
-    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 700;
-}
-
 /* Game Info */
 .game-info {
     text-align: center;
@@ -391,13 +396,6 @@ body {
 
 .btn-primary:hover {
     background: #45a049;
-}
-
-.game-controls {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-top: 15px;
 }
 
 /* Animations */

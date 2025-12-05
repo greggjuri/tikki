@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Five Card Trick Game</title>
+    <title>Last Trick Game</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -11,6 +11,12 @@
         <!-- Settings Panel -->
         <div class="settings-panel">
             <button id="settings-btn" class="settings-btn">⚙️ Settings</button>
+            <div class="match-info" id="match-info">
+                <span class="match-goal">First to <span id="goal-display">5</span> wins</span>
+                <span class="match-divider">•</span>
+                <span class="match-difficulty">vs <span id="difficulty-display">Medium</span> AI</span>
+            </div>
+            <button id="new-game-btn" class="btn btn-primary">New Game</button>
             <div id="settings-modal" class="modal hidden">
                 <div class="modal-content">
                     <h2>Game Settings</h2>
@@ -47,7 +53,7 @@
 
         <!-- Game Header -->
         <div class="game-header">
-            <h1>Five Card Trick</h1>
+            <h1>Last Trick</h1>
             <div class="score-display">
                 <div class="score">
                     <span class="label">You:</span>
@@ -57,11 +63,6 @@
                     <span class="label">AI:</span>
                     <span id="ai-score">0</span>
                 </div>
-            </div>
-            <div class="match-info" id="match-info">
-                <span class="match-goal">First to <span id="goal-display">5</span> wins</span>
-                <span class="match-divider">•</span>
-                <span class="match-difficulty">vs <span id="difficulty-display">Medium</span> AI</span>
             </div>
         </div>
 
@@ -106,12 +107,6 @@
             <div id="player-cards" class="card-container">
                 <!-- Player cards will be added here by JS -->
             </div>
-        </div>
-
-        <!-- Game Controls -->
-        <div class="game-controls">
-            <button id="new-game-btn" class="btn btn-primary">New Game</button>
-            <button id="restart-btn" class="btn">Restart Round</button>
         </div>
     </div>
 
